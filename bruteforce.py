@@ -32,7 +32,8 @@ class BestActionsForThePrice:
     def main(self):
         self.check_action()
         self.action_to_select()
-        print(self.calculate_total_action_by())
+        self.calculate_gain_action()
+        # print(self.dic_result_profitability)
 
     def check_action(self):
         for action in self.dictionnaire_action:
@@ -47,6 +48,7 @@ class BestActionsForThePrice:
         return ((prix * pourcentage) / 100)
 
     def action_to_select(self):
+        """ Sélectionne 500 euro d'action"""
         for action in self.dic_result_profitability:
             if (self.max_spend - self.dictionnaire_action[action]["prix"]) < 0:
                 pass
@@ -54,12 +56,64 @@ class BestActionsForThePrice:
                 self.max_spend = self.max_spend - self.dictionnaire_action[action]["prix"]
                 self.list_selection_action.append(action)
 
-    def calculate_total_action_by(self):
+    def calculate_gain_action(self):
         result = 0
+        result_gain = 0
         for action in self.list_selection_action:
-            print("", action, "prix action : ", self.dictionnaire_action[action]["prix"])
-            result = self.dictionnaire_action[action]["prix"] + result
-        return result
+            result += self.dic_result_profitability[action] + self.dictionnaire_action[action]["prix"]
+            result_gain += self.dictionnaire_action[action]["prix"]
+        print("Alogo 1 : ", result_gain, result)
+
+
+class BestActionsForThePriceThee:
+    def __init__(self):
+        self.data = []
+        self.max_spend = 500
+        self.matrice = []
+
+    def main(self):
+        self.calculate_renta(ACTIONS)
+        result = self.dynamique()
+        self.calculate_gain_action(result)
+        # print(result)
+
+    def calculate_renta(self, dictionnaire):
+        for value in dictionnaire:
+            self.data.append([value, dictionnaire[value]["prix"], (dictionnaire[value]["prix"] * dictionnaire[value]["pourcentage"])/100])
+
+    def dynamique(self):
+        self.matrice = [[0 for x in range(self.max_spend + 1)] for x in range(len(self.data) + 1)]
+        for i in range(1, len(self.data) + 1):
+            for w in range(1, self.max_spend + 1):
+                if self.data[i-1][1] <= w:
+                    self.matrice[i][w] = max(self.data[i-1][2] + self.matrice[i-1][w-self.data[i-1][1]], self.matrice[i-1][w])
+                else:
+                    self.matrice[i][w] = self.matrice[i-1][w]
+
+        # Retrouver les éléments en fonction de la somme
+        w = self.max_spend
+        n = len(self.data)
+        elements_selection = []
+
+        while w >= 0 and n >= 0:
+            e = self.data[n-1]
+            if self.matrice[n][w] == self.matrice[n-1][w-e[1]] + e[2]:
+                elements_selection.append(e)
+                w -= e[1]
+
+            n -= 1
+
+        return self.matrice[-1][-1], elements_selection
+
+    def calculate_gain_action(self, result):
+        result_data = 0
+        result_data_gain = 0
+        for action in result[1]:
+            result_data += ACTIONS[action[0]]["prix"]
+            result_data_gain += ACTIONS[action[0]]["prix"] + action[2]
+
+        print("Alogo 2 : ", result_data, result_data_gain)
 
 
 BestActionsForThePrice(ACTIONS).main()
+BestActionsForThePriceThee().main()

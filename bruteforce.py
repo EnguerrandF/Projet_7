@@ -1,70 +1,45 @@
-ACTIONS = {
-    'Action-1': {'prix': 20, 'pourcentage': 5},
-    'Action-2': {'prix': 30, 'pourcentage': 10},
-    'Action-3': {'prix': 50, 'pourcentage': 15},
-    'Action-4': {'prix': 70, 'pourcentage': 20},
-    'Action-5': {'prix': 60, 'pourcentage': 17},
-    'Action-6': {'prix': 80, 'pourcentage': 25},
-    'Action-7': {'prix': 22, 'pourcentage': 7},
-    'Action-8': {'prix': 26, 'pourcentage': 11},
-    'Action-9': {'prix': 48, 'pourcentage': 13},
-    'Action-10': {'prix': 34, 'pourcentage': 27},
-    'Action-11': {'prix': 42, 'pourcentage': 17},
-    'Action-12': {'prix': 110, 'pourcentage': 9},
-    'Action-13': {'prix': 38, 'pourcentage': 23},
-    'Action-14': {'prix': 14, 'pourcentage': 1},
-    'Action-15': {'prix': 18, 'pourcentage': 3},
-    'Action-16': {'prix': 8, 'pourcentage': 8},
-    'Action-17': {'prix': 4, 'pourcentage': 12},
-    'Action-18': {'prix': 10, 'pourcentage': 14},
-    'Action-19': {'prix': 24, 'pourcentage': 21},
-    'Action-20': {'prix': 114, 'pourcentage': 18},
-}
-ACTION_TWO = {
-    'Action-1': {'prix': 20, 'pourcentage': 5},
-    'Action-2': {'prix': 30, 'pourcentage': 10},
-    'Action-3': {'prix': 50, 'pourcentage': 15},
-    'Action-4': {'prix': 70, 'pourcentage': 20},
-}
+import time
+import csv
 
 
-class BruteForceOfficiel:
-    def __init__(self, data, price):
+class BruteForce:
+    def __init__(self, name_csv, price):
         self.capacity = price
-        self.data = data
-        self.conv_data = []
+        self.name_csv = name_csv
+        self.data = self.open_csv()
 
     def main(self):
-        self.calculate_renta()
-        result = self.force_brute(self.capacity, self.conv_data, [])
-        self.calculate_gain_action(result)
+        time_start = time.time()
+        result = self.force_brute(self.capacity, self.data, [])
+        print(f"Gain: {result[0][0]}, Prix de vente: {result[1]}, List action: {result[0][1]}")
+        print(f"Temps d'executions: {time.time() - time_start} secondes")
 
-    def force_brute(self, capacite, elements, elements_selection):
-        if elements:
-            val1, lstVal1 = self.force_brute(capacite, elements[1:], elements_selection)
-            val = elements[0]
-            if val[1] <= capacite:
-                val2, lstVal2 = self.force_brute(capacite - val[1], elements[1:], elements_selection + [val])
+    def open_csv(self):
+        with open(self.name_csv, newline="", encoding='utf-8') as csvfile:
+            reader = list(csv.reader(csvfile, delimiter=","))
+        shares_list = []
+        for line in reader[1:]:
+            shares_list.append({
+                    "name": line[0],
+                    "price": float(line[1]),
+                    "percentage_profit": float(line[2]),
+                    "profit": round((float(line[1]) * float(line[2])) / 100, 2)
+                })
+        return shares_list
+
+    def force_brute(self, price, data, selected_item):
+        if data:
+            val1, lstVal1 = self.force_brute(price, data[1:], selected_item)
+            data_current = data[0]
+            if data_current["price"] <= price:
+                val2, lstVal2 = self.force_brute(price - data_current["price"], data[1:], selected_item + [data_current])
                 if val1 < val2:
                     return val2, lstVal2
-
             return val1, lstVal1
         else:
-            return sum([i[2] for i in elements_selection]), elements_selection
-
-    def calculate_renta(self):
-        for value in self.data:
-            self.conv_data.append([value, self.data[value]["prix"], (self.data[value]["prix"] * self.data[value]["pourcentage"])/100])
-
-    def calculate_gain_action(self, result):
-        result_data = 0
-        result_data_gain = 0
-        for action in result[1]:
-            result_data += self.data[action[0]]["prix"]
-            result_data_gain += self.data[action[0]]["prix"] + action[2]
-
-        print("Algo brute : ", result_data, result_data_gain)
-        print("Algo brute : ", result)
+            return [sum([i['profit'] for i in selected_item]), selected_item], sum([i['price'] for i in selected_item])
 
 
-BruteForceOfficiel(ACTIONS, 500).main()
+# BruteForce("./data/small_data.csv", 1.0).main()
+# BruteForce("./data/dataset1_Python+P7.csv", 500).main()
+# BruteForce("./data/dataset2_Python+P7.csv", 500).main()

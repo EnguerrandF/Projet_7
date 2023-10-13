@@ -82,22 +82,9 @@ class DynamiqueFloat:
         return round((float(price) * float(poucentage)) / 100, 2)
 
 
-DynamiqueFloat("./data/small_data.csv", 1.0).main()
+# DynamiqueFloat("./data/small_data.csv", 1.0).main()
 # DynamiqueFloat("./data/dataset1_Python+P7.csv", 500).main()
-# DynamiqueFloat("./data/dataset2_Python+P7.csv", 500).main()
-
-"""
-    dataset1_Python+P7.csv
-    Prix de vente 499.93
-    Le gain est de 198.54
-    Temps d'executions: 104.3878984451294 secondes
-"""
-"""
-    dataset2_Python+P7.csv
-    Prix de vente 499.92
-    Le gain est de 197.95
-    Temps d'executions: 72.23420310020447 secondes
-"""
+DynamiqueFloat("./data/dataset2_Python+P7.csv", 500).main()
 
 
 class Glouton:
@@ -148,20 +135,5 @@ class Glouton:
 
 
 # Glouton("./data/dataset1_Python+P7.csv", 500).main()
-# Glouton("./data/dataset2_Python+P7.csv", 500).main()
+Glouton("./data/dataset2_Python+P7.csv", 500).main()
 # Glouton("./data/small_data.csv", 1.0).main()
-
-"""
-    dataset1_Python+P7.csv
-    Prix de vente 499.94
-    Le gain est de 198.51
-    Avec le round au dictionnaire de la donnée profit a la fonction retrieve_data:  Le gain est de 198.49
-    Temps d'executions: 0.004999876022338867 secondes
-"""
-"""
-    dataset2_Python+P7.csv
-    Prix de vente 499.98
-    Le gain est de 197.77
-    Avec le round au dictionnaire de la donnée profit a la fonction retrieve_data:  Le gain est de 197.75
-    Temps d'executions: 0.0059893131256103516 secondes
-"""

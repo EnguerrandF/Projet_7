@@ -32,7 +32,8 @@ class BruteForce:
             val1, lstVal1 = self.force_brute(price, data[1:], selected_item)
             data_current = data[0]
             if data_current["price"] <= price:
-                val2, lstVal2 = self.force_brute(price - data_current["price"], data[1:], selected_item + [data_current])
+                val2, lstVal2 = self.force_brute(price - data_current["price"], data[1:],
+                                                 selected_item + [data_current])
                 if val1 < val2:
                     return val2, lstVal2
             return val1, lstVal1
